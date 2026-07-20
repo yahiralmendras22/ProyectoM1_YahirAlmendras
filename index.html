@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paleta de Colores</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <main>
+        <h1>Paleta de Colores</h1>
+        <section class="controles">
+            <button class="btn-palette">🎨 Generar Paleta</button>
+
+            <div class="control-grupo">
+                <h3>Cantidad de colores:</h3>
+                <div class="btn-elegir">
+                    <button data-cantidad="6">6</button>
+                    <button data-cantidad="8">8</button>
+                    <button data-cantidad="9">9</button>
+                </div>
+            </div>
+
+            <div class="control-grupo">
+                <h3>Formato:</h3>
+                <div class="btn-formato-group">
+                    <button class="btn-formato activo" data-formato="hex">HEX</button>
+                    <button class="btn-formato" data-formato="hsl">HSL</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="palette-container"></section>
+    </main>
+
+    <script src="./js/script.js"></script>
+</body>
+</html>
