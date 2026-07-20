@@ -9,10 +9,21 @@
 <body>
 
     <main>
-        <h1>Generador De Paleta</h1>
-        <p>Elegi los colores que mas sea de tu agrado para tus proyectos</p>
+        <header class="encabezado-cuadro">
+          <h1>Generador De Paleta</h1>
+          <p>Elegi los colores que mas sea de tu agrado para tus proyectos</p>
+        </header>  
+
         <section class="controles">
-            <button class="btn-palette">🎨 Generar Paleta</button>
+            <div class="fila-botones">
+                <button class="btn-palette">🎨 Generar Paleta</button>
+                <button class="btn-guardar">💾 Guardar Paleta</button>
+            </div>
+
+            <div class="form-guardar oculto">
+                <input type="text" class="input-nombre-paleta" placeholder="Nombre de la paleta">
+                <button class="btn-confirmar-guardar">✔️ Confirmar</button>
+            </div>
 
             <div class="control-grupo">
                 <h3>Cantidad de colores:</h3>
@@ -30,15 +41,21 @@
                     <button class="btn-formato" data-formato="hsl">HSL</button>
                 </div>
             </div>
-
         </section>
 
         <section class="palette-container"></section>
+
+        <section class="guardadas-container">
+            <h3>Paletas Guardadas</h3>
+            <div class="lista-guardadas"></div>
+        </section>
     </main>
 
     <footer>
-        <p>&copy; 2026 ColorsLife. Todos los derechos reservados</p> 
+        <p>&copy; 2026 ColorsLife. Todos los derechos reservados</p>
+    </footer>
 
     <script src="script.js"></script>
 </body>
 </html>
+

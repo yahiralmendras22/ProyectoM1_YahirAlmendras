@@ -1,13 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
     const btnGenerar = document.querySelector('.btn-palette');
     const btnesElegir = document.querySelectorAll('.btn-elegir button');
-    const btnesFormato = document.querySelectorAll('.btn-formato'); // NUEVO
+    const btnesFormato = document.querySelectorAll('.btn-formato'); 
     const contenedor = document.querySelector('.palette-container');
+    
+    const btnGuardar = document.querySelector('.btn-guardar');
+    const formGuardar = document.querySelector('.form-guardar');
+    const inputNombre = document.querySelector('.input-nombre-paleta');
+    const btnConfirmar = document.querySelector('.btn-confirmar-guardar');
+    const listaGuardadas = document.querySelector('.lista-guardadas');
 
     let cantidadActual = 6;
-    let formatoActual = 'hex'; // 'hex' o 'hsl'
+    let formatoActual = 'hex'; 
+    
+    let paletasGuardadas = JSON.parse(localStorage.getItem('paletasColorsLife')) || [];
 
-    // Genera un color hexadecimal aleatorio
     function generarColorHex() {
         const letras = '0123456789ABCDEF';
         let color = '#';
@@ -17,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return color;
     }
 
-    // Convierte HEX a HSL. Devuelve un string tipo "hsl(210, 50%, 40%)"
     function hexToHsl(hex) {
         let r = parseInt(hex.slice(1, 3), 16) / 255;
         let g = parseInt(hex.slice(3, 5), 16) / 255;
@@ -47,12 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return `hsl(${h}, ${s}%, ${l}%)`;
     }
 
-    // Devuelve el texto a mostrar según el formato actual, a partir del hex guardado
     function formatearColor(hex) {
         return formatoActual === 'hex' ? hex : hexToHsl(hex);
     }
 
-    // Actualiza el texto de TODAS las tarjetas según el formato actual (sin cambiar colores)
     function actualizarTextosFormato() {
         const tarjetas = document.querySelectorAll('.color-card');
         tarjetas.forEach(tarjeta => {
@@ -61,18 +65,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Marca visualmente cuál botón de formato está activo
     function actualizarBotonesFormato() {
         btnesFormato.forEach(btn => {
             btn.classList.toggle('activo', btn.dataset.formato === formatoActual);
         });
     }
 
-    // Crea una tarjeta de color
     function crearTarjeta(color) {
         const tarjeta = document.createElement('div');
         tarjeta.className = 'color-card';
-        tarjeta.dataset.hex = color; // guardamos el hex real acá
+        tarjeta.dataset.hex = color; 
 
         const box = document.createElement('div');
         box.className = 'color-box';
@@ -94,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return tarjeta;
     }
 
-    // Genera nuevos colores solo en las tarjetas NO bloqueadas
     function generarPaleta() {
         const tarjetas = document.querySelectorAll('.color-card');
         tarjetas.forEach(tarjeta => {
@@ -110,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Ajusta la CANTIDAD de tarjetas sin tocar el color de las que ya existen
     function ajustarCantidadTarjetas(cantidad) {
         const tarjetasActuales = contenedor.querySelectorAll('.color-card');
         const diferencia = cantidad - tarjetasActuales.length;
@@ -126,7 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Crea la paleta inicial con colores random (solo al cargar la página)
     function crearPaletaInicial(cantidad) {
         contenedor.innerHTML = '';
         for (let i = 0; i < cantidad; i++) {
@@ -134,10 +133,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Botón "Generar Paleta"
+    function mostrarPaletasGuardadas() {
+        listaGuardadas.innerHTML = '';
+
+        if (paletasGuardadas.length === 0) {
+            listaGuardadas.innerHTML = '<p class="sin-guardadas">No hay paletas guardadas todavía.</p>';
+            return;
+        }
+
+        paletasGuardadas.forEach((paleta, index) => {
+            const miniPaleta = document.createElement('div');
+            miniPaleta.className = 'mini-paleta';
+
+            // Agrega el nombre recuperado de la paleta
+            const miniInfo = document.createElement('div');
+            miniInfo.className = 'mini-info';
+            miniInfo.innerHTML = `<span class="mini-nombre">${paleta.nombre}</span>`;
+
+            const miniColores = document.createElement('div');
+            miniColores.className = 'mini-colores';
+
+            paleta.colores.forEach(color => {
+                const divColor = document.createElement('div');
+                divColor.className = 'mini-color';
+                divColor.style.backgroundColor = color;
+                miniColores.appendChild(divColor);
+            });
+
+            const miniAcciones = document.createElement('div');
+            miniAcciones.className = 'mini-acciones';
+            miniAcciones.innerHTML = `<button class="btn-eliminar" data-index="${index}" title="Borrar paleta">🗑️</button>`;
+
+            miniPaleta.appendChild(miniInfo);
+            miniPaleta.appendChild(miniColores);
+            miniPaleta.appendChild(miniAcciones);
+            listaGuardadas.appendChild(miniPaleta);
+        });
+    }
+
     btnGenerar.addEventListener('click', generarPaleta);
 
-    // Botones de cantidad (6, 8, 9)
     btnesElegir.forEach(btn => {
         btn.addEventListener('click', () => {
             cantidadActual = parseInt(btn.dataset.cantidad, 10);
@@ -145,11 +180,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Botones de formato (HEX / HSL)
     btnesFormato.forEach(btn => {
         btn.addEventListener('click', () => {
             const nuevoFormato = btn.dataset.formato;
-            if (nuevoFormato === formatoActual) return; // ya está en ese formato, no hago nada(hex)
+            if (nuevoFormato === formatoActual) return; 
 
             formatoActual = nuevoFormato;
             actualizarTextosFormato();
@@ -157,7 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Delegación de eventos para el candado
     contenedor.addEventListener('click', (e) => {
         if (e.target.classList.contains('btn-lock')) {
             const lock = e.target;
@@ -176,7 +209,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Genera la paleta inicial (con colores) al cargar la página
+    btnGuardar.addEventListener('click', () => {
+        formGuardar.classList.toggle('oculto');
+        inputNombre.focus();
+    });
+
+    btnConfirmar.addEventListener('click', () => {
+        const nombre = inputNombre.value.trim() || "Mi Paleta";
+        const tarjetas = document.querySelectorAll('.color-card');
+        const coloresActuales = Array.from(tarjetas).map(t => t.dataset.hex);
+
+        paletasGuardadas.push({
+            nombre: nombre,
+            colores: coloresActuales
+        });
+
+        localStorage.setItem('paletasColorsLife', JSON.stringify(paletasGuardadas));
+
+        inputNombre.value = '';
+        formGuardar.classList.add('oculto');
+        mostrarPaletasGuardadas();
+    });
+
+    listaGuardadas.addEventListener('click', (e) => {
+        const botonEliminar = e.target.closest('.btn-eliminar');
+        
+        if (botonEliminar) {
+            const index = botonEliminar.dataset.index;
+            paletasGuardadas.splice(index, 1);
+            localStorage.setItem('paletasColorsLife', JSON.stringify(paletasGuardadas));
+            mostrarPaletasGuardadas();
+        }
+    });
+
     crearPaletaInicial(cantidadActual);
-    actualizarBotonesFormato(); // marca HEX como activo desde el inicio
+    actualizarBotonesFormato(); 
+    mostrarPaletasGuardadas(); 
 });
+
