@@ -393,3 +393,47 @@ h3 {
     color: #999;
     font-style: italic;
 }
+
+/* Estilos para el Footer integrados al proyecto */
+footer {
+    display: flex;
+    justify-content: space-between; /* Texto a la izquierda, redes a la derecha */
+    align-items: center; /* Alineación vertical perfecta */
+    width: 100%;
+    max-width: 1200px; /* Mismo ancho maximo que tu etiqueta <main> */
+    margin-top: 2rem; /* Separación con los elementos de arriba */
+    padding: 15px 20px; /* Margen interno */
+    box-sizing: border-box;
+}
+
+footer p {
+    margin: 0; /* Elimina el margen por defecto para que no se desalinee */
+    color: #555; /* Mismo color gris que usas en el encabezado */
+    font-size: 14px;
+}
+
+.footer-redes {
+    display: flex;
+    gap: 15px; /* Espacio limpio entre cada red social */
+}
+
+.footer-redes a {
+    color: #837539; /* El color dorado/marrón principal de tus botones */
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.footer-redes a:hover {
+    color: #695e2e; /* El color oscuro que usas en tus :hover */
+}
+
+/* Adaptación para celulares */
+@media (max-width: 600px) {
+    footer {
+        flex-direction: column; /* Se apilan en pantallas chicas para que no se rompa */
+        gap: 10px;
+        text-align: center;
+    }
+}
