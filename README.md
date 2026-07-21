@@ -1,1 +1,1 @@
-![Captura de pantalla de Colorslife](./assest/assest%20img.png)
+![Captura de pantalla de Colorslife](./assest/captura.png)
