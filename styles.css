@@ -394,39 +394,47 @@ h3 {
     font-style: italic;
 }
 
-/* Estilos para el Footer integrados al proyecto */
+/* Estilos del Footer con soporte para múltiples iconos SVG */
 footer {
     display: flex;
     justify-content: space-between; /* Texto a la izquierda, redes a la derecha */
     align-items: center; /* Alineación vertical perfecta */
     width: 100%;
-    max-width: 1200px; /* Mismo ancho maximo que tu etiqueta <main> */
-    margin-top: 2rem; /* Separación con los elementos de arriba */
-    padding: 15px 20px; /* Margen interno */
+    max-width: 1200px; /* Mismo ancho máximo que tu <main> */
+    margin-top: 3rem; /* Espacio extra arriba para despegarlo de las paletas */
+    padding: 15px 20px;
     box-sizing: border-box;
 }
 
 footer p {
-    margin: 0; /* Elimina el margen por defecto para que no se desalinee */
-    color: #555; /* Mismo color gris que usas en el encabezado */
-    font-size: 14px;
+    color: #555;
+    font-size: 16px;
+    margin-bottom: 15px;
+    text-align: center;
 }
 
 .footer-redes {
     display: flex;
-    gap: 15px; /* Espacio limpio entre cada red social */
+    gap: 18px; /* Espaciado cómodo entre los 5 iconos */
 }
 
 .footer-redes a {
-    color: #837539; /* El color dorado/marrón principal de tus botones */
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 600;
-    transition: color 0.2s ease;
+    color: #837539; /* El color dorado principal de tus botones */
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
 }
 
+/* Controlamos el tamaño exacto de tus nuevos logos SVG */
+.footer-redes svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Efecto interactivo al pasar el mouse */
 .footer-redes a:hover {
-    color: #695e2e; /* El color oscuro que usas en tus :hover */
+    color: #695e2e; /* El dorado oscuro de tus hovers */
+    transform: scale(1.15); /* Crece un poquito más para resaltar */
 }
 
 /* Adaptación para celulares */
