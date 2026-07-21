@@ -1,9 +1,11 @@
+
 document.addEventListener('DOMContentLoaded', () => {
+    //evento del DOM//
     const btnGenerar = document.querySelector('.btn-palette');
     const btnesElegir = document.querySelectorAll('.btn-elegir button');
-    const btnesFormato = document.querySelectorAll('.btn-formato'); 
+    const btnesFormato = document.querySelectorAll('.btn-formato');
     const contenedor = document.querySelector('.palette-container');
-    
+ 
     const btnGuardar = document.querySelector('.btn-guardar');
     const formGuardar = document.querySelector('.form-guardar');
     const inputNombre = document.querySelector('.input-nombre-paleta');
@@ -11,19 +13,78 @@ document.addEventListener('DOMContentLoaded', () => {
     const listaGuardadas = document.querySelector('.lista-guardadas');
  
     let cantidadActual = 6;
-    let formatoActual = 'hex'; 
-    
-    // PARCHE: lectura protegida del localStorage para que un dato corrupto
-    // no rompa la carga completa de la página.
-
-   let paletasGuardadas = [];
-    try {
-        const datosGuardados = localStorage.getItem('paletasColorsLife');
-        paletasGuardadas = datosGuardados ? JSON.parse(datosGuardados) : [];
-    } catch (error) {
-        console.error('No se pudieron leer las paletas guardadas:', error);
-        paletasGuardadas = [];
+    let formatoActual = 'hex';
+ 
+    const CLAVE_STORAGE = 'paletasColorsLife';
+    const VERSION_STORAGE = 1;
+ 
+    // ==========================================================
+    // BLOQUE DE LOCALSTORAGE (mejorado)
+    // ==========================================================
+ 
+    function hayLocalStorage() {
+        try {
+            const test = '__test__';
+            localStorage.setItem(test, test);
+            localStorage.removeItem(test);
+            return true;
+        } catch {
+            return false;
+        }
     }
+ 
+    function esPaletaValida(p) {
+        return (
+            p &&
+            typeof p.id === 'string' &&
+            typeof p.nombre === 'string' &&
+            Array.isArray(p.colores) &&
+            p.colores.every(c => typeof c === 'string')
+        );
+    }
+ 
+    function leerPaletas() {
+        if (!hayLocalStorage()) return [];
+ 
+        try {
+            const crudo = localStorage.getItem(CLAVE_STORAGE);
+            if (!crudo) return [];
+ 
+            const parsed = JSON.parse(crudo);
+            const lista = Array.isArray(parsed?.paletas) ? parsed.paletas : [];
+ 
+            // Filtra cualquier elemento mal formado en vez de asumir que todos son válidos
+            return lista.filter(esPaletaValida);
+        } catch (error) {
+            console.error('No se pudieron leer las paletas guardadas:', error);
+            return [];
+        }
+    }
+ 
+    function guardarPaletas(paletas) {
+        if (!hayLocalStorage()) return false;
+ 
+        try {
+            const payload = { version: VERSION_STORAGE, paletas };
+            localStorage.setItem(CLAVE_STORAGE, JSON.stringify(payload));
+            return true;
+        } catch (error) {
+            console.error('No se pudo guardar en localStorage:', error);
+            return false;
+        }
+    }
+ 
+    function generarId() {
+        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+            return crypto.randomUUID();
+        }
+        return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    }
+ 
+    // Estado en memoria de las paletas guardadas (arranca leyendo del storage)
+    let paletasGuardadas = leerPaletas();
+ 
+    //funcion para que genere un color aleatorio//
  
     function generarColorHex() {
         const letras = '0123456789ABCDEF';
@@ -33,6 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return color;
     }
+ 
+    //genera una funcion de codigo hsl//
  
     function hexToHsl(hex) {
         let r = parseInt(hex.slice(1, 3), 16) / 255;
@@ -88,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
  
-    // NUEVO: agrega/quita la clase "cantidad-N" al contenedor para que el CSS
+    // Agrega/quita la clase "cantidad-N" al contenedor para que el CSS
     // pueda repartir las filas exactamente como corresponde (6->3+3, 8->4+4, 9->4+5).
     function actualizarClaseCantidad() {
         contenedor.classList.remove('cantidad-6', 'cantidad-8', 'cantidad-9');
@@ -96,11 +159,11 @@ document.addEventListener('DOMContentLoaded', () => {
             contenedor.classList.add('cantidad-' + cantidadActual);
         }
     }
-
+ 
     function crearTarjeta(color) {
         const tarjeta = document.createElement('div');
         tarjeta.className = 'color-card';
-        tarjeta.dataset.hex = color; 
+        tarjeta.dataset.hex = color;
  
         const box = document.createElement('div');
         box.className = 'color-box';
@@ -150,15 +213,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
  
-   function ajustarCantidadTarjetas(cantidad) {
-    // Limpia por completo el contenedor para reiniciar el flujo
-    contenedor.innerHTML = '';
-    // Crea e inyecta la cantidad exacta de tarjetas requeridas
-    for (let i = 0; i < cantidad; i++) {
-        contenedor.appendChild(crearTarjeta(generarColorHex()));
+    function ajustarCantidadTarjetas(cantidad) {
+        // Limpia por completo el contenedor para reiniciar el flujo
+        contenedor.innerHTML = '';
+        // Crea e inyecta la cantidad exacta de tarjetas requeridas
+        for (let i = 0; i < cantidad; i++) {
+            contenedor.appendChild(crearTarjeta(generarColorHex()));
+        }
     }
-}
-
+ 
  
     function crearPaletaInicial(cantidad) {
         contenedor.innerHTML = '';
@@ -175,11 +238,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
  
-        paletasGuardadas.forEach((paleta, index) => {
+        // botón de eliminar siempre borra la paleta correcta, sin importar
+        // el orden en que se dibujen ni si hay clics rápidos seguidos.
+        paletasGuardadas.forEach((paleta) => {
             const miniPaleta = document.createElement('div');
             miniPaleta.className = 'mini-paleta';
  
-      // PARCHE: se arma el nombre con textContent (no innerHTML) para que
+            // PARCHE: se arma el nombre con textContent (no innerHTML) para que
             // un nombre de paleta con caracteres tipo < > " no rompa el HTML
             // ni permita inyectar código (XSS).
             const miniInfo = document.createElement('div');
@@ -203,7 +268,13 @@ document.addEventListener('DOMContentLoaded', () => {
  
             const miniAcciones = document.createElement('div');
             miniAcciones.className = 'mini-acciones';
-            miniAcciones.innerHTML = `<button class="btn-eliminar" data-index="${index}" title="Borrar paleta">🗑️</button>`;
+ 
+            const btnEliminar = document.createElement('button');
+            btnEliminar.className = 'btn-eliminar';
+            btnEliminar.dataset.id = paleta.id; // id, no índice
+            btnEliminar.title = 'Borrar paleta';
+            btnEliminar.textContent = '🗑️';
+            miniAcciones.appendChild(btnEliminar);
  
             miniPaleta.appendChild(miniInfo);
             miniPaleta.appendChild(miniColores);
@@ -220,26 +291,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
  
     // Cambio de cantidad de colores (6, 8, 9)
-btnesElegir.forEach(btn => {
-    btn.addEventListener('click', () => {
-        cantidadActual = parseInt(btn.dataset.cantidad, 10);
-        
-        // 1. Cambiamos la iluminación del botón seleccionado
-        actualizarBotonesCantidad();
-        
-        // 2. Aplicamos inmediatamente la clase (cantidad-6, cantidad-8 o cantidad-9)
-        actualizarClaseCantidad(); 
-        
-        // 3. Por último, borramos y creamos las tarjetas dentro del grid ya configurado
-        ajustarCantidadTarjetas(cantidadActual); 
+    btnesElegir.forEach(btn => {
+        btn.addEventListener('click', () => {
+            cantidadActual = parseInt(btn.dataset.cantidad, 10);
+ 
+            // 1. Cambiamos la iluminación del botón seleccionado
+            actualizarBotonesCantidad();
+ 
+            // 2. Aplicamos inmediatamente la clase (cantidad-6, cantidad-8 o cantidad-9)
+            actualizarClaseCantidad();
+ 
+            // 3. Por último, borramos y creamos las tarjetas dentro del grid ya configurado
+            ajustarCantidadTarjetas(cantidadActual);
+        });
     });
-});
-
-
+ 
+ 
     btnesFormato.forEach(btn => {
         btn.addEventListener('click', () => {
             const nuevoFormato = btn.dataset.formato;
-            if (nuevoFormato === formatoActual) return; 
+            if (nuevoFormato === formatoActual) return;
  
             formatoActual = nuevoFormato;
             actualizarTextosFormato();
@@ -284,7 +355,7 @@ btnesElegir.forEach(btn => {
         }
     });
  
-    // MODIFICADO: el botón "Guardar Paleta" queda marcado como activo mientras el formulario está abierto
+    // El botón "Guardar Paleta" queda marcado como activo mientras el formulario está abierto
     btnGuardar.addEventListener('click', () => {
         formGuardar.classList.toggle('oculto');
         btnGuardar.classList.toggle('activo', !formGuardar.classList.contains('oculto'));
@@ -296,23 +367,27 @@ btnesElegir.forEach(btn => {
         const tarjetas = document.querySelectorAll('.color-card');
         const coloresActuales = Array.from(tarjetas).map(t => t.dataset.hex);
  
-        paletasGuardadas.push({
+        const nuevaPaleta = {
+            id: generarId(),
             nombre: nombre,
-            colores: coloresActuales
-        });
+            colores: coloresActuales,
+            fecha: new Date().toISOString(),
+        };
  
-        // PARCHE: si el localStorage falla al guardar (por ejemplo, se llenó
-        // la cuota disponible), se avisa al usuario y se revierte el cambio
-        // en memoria en vez de dejar la app en un estado inconsistente.
-        try {
-            localStorage.setItem('paletasColorsLife', JSON.stringify(paletasGuardadas));
-        } catch (error) {
-            console.error('No se pudo guardar la paleta:', error);
+        // MEJORA: array inmutable. En vez de mutar paletasGuardadas con push()
+        // y tener que revertir con pop() si falla el guardado, armamos una
+        // lista nueva primero y solo la "confirmamos" como estado real si
+        // guardarPaletas() tuvo éxito. Así el estado en memoria nunca queda
+        // desincronizado del storage, ni por un instante.
+        const listaNueva = [...paletasGuardadas, nuevaPaleta];
+        const ok = guardarPaletas(listaNueva);
+ 
+        if (!ok) {
             alert('No se pudo guardar la paleta. Puede que se haya alcanzado el límite de almacenamiento.');
-            paletasGuardadas.pop();
             return;
         }
  
+        paletasGuardadas = listaNueva;
         inputNombre.value = '';
         formGuardar.classList.add('oculto');
         btnGuardar.classList.remove('activo'); // Se apaga el estado activo al confirmar
@@ -321,26 +396,28 @@ btnesElegir.forEach(btn => {
  
     listaGuardadas.addEventListener('click', (e) => {
         const botonEliminar = e.target.closest('.btn-eliminar');
-        
-        if (botonEliminar) {
-            // PARCHE: se convierte el índice a número explícitamente, ya que
-            // dataset siempre devuelve strings.
-            const index = parseInt(botonEliminar.dataset.index, 10);
-            paletasGuardadas.splice(index, 1);
  
-            try {
-                localStorage.setItem('paletasColorsLife', JSON.stringify(paletasGuardadas));
-            } catch (error) {
-                console.error('No se pudo actualizar el almacenamiento tras borrar:', error);
+        if (botonEliminar) {
+            const id = botonEliminar.dataset.id;
+ 
+            // dispararon casi juntos: siempre se elimina la paleta correcta.
+            const listaNueva = paletasGuardadas.filter(p => p.id !== id);
+            const ok = guardarPaletas(listaNueva);
+ 
+            if (!ok) {
+                console.error('No se pudo actualizar el almacenamiento tras borrar.');
+                alert('No se pudo actualizar el almacenamiento tras borrar.');
+                return; // no toca el estado en memoria si no se pudo persistir
             }
  
+            paletasGuardadas = listaNueva;
             mostrarPaletasGuardadas();
         }
     });
  
     crearPaletaInicial(cantidadActual);
-    actualizarBotonesFormato(); 
+    actualizarBotonesFormato();
     actualizarBotonesCantidad(); //*Marca "6" como activo al cargar
     actualizarClaseCantidad(); // Aplica "cantidad-6" al cargar
-    mostrarPaletasGuardadas(); 
+    mostrarPaletasGuardadas();
 });
