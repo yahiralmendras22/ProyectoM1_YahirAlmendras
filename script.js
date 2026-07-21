@@ -13,7 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let cantidadActual = 6;
     let formatoActual = 'hex'; 
     
-    let paletasGuardadas = JSON.parse(localStorage.getItem('paletasColorsLife')) || [];
+    // PARCHE: lectura protegida del localStorage para que un dato corrupto
+    // no rompa la carga completa de la página.
+
+   let paletasGuardadas = [];
+    try {
+        const datosGuardados = localStorage.getItem('paletasColorsLife');
+        paletasGuardadas = datosGuardados ? JSON.parse(datosGuardados) : [];
+    } catch (error) {
+        console.error('No se pudieron leer las paletas guardadas:', error);
+        paletasGuardadas = [];
+    }
  
     function generarColorHex() {
         const letras = '0123456789ABCDEF';
@@ -78,6 +88,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
  
+    // NUEVO: agrega/quita la clase "cantidad-N" al contenedor para que el CSS
+    // pueda repartir las filas exactamente como corresponde (6->3+3, 8->4+4, 9->4+5).
+    function actualizarClaseCantidad() {
+        contenedor.classList.remove('cantidad-6', 'cantidad-8', 'cantidad-9');
+        if ([6, 8, 9].includes(cantidadActual)) {
+            contenedor.classList.add('cantidad-' + cantidadActual);
+        }
+    }
+
     function crearTarjeta(color) {
         const tarjeta = document.createElement('div');
         tarjeta.className = 'color-card';
@@ -131,20 +150,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
  
-    function ajustarCantidadTarjetas(cantidad) {
-        const tarjetasActuales = contenedor.querySelectorAll('.color-card');
-        const diferencia = cantidad - tarjetasActuales.length;
- 
-        if (diferencia > 0) {
-            for (let i = 0; i < diferencia; i++) {
-                contenedor.appendChild(crearTarjeta(generarColorHex()));
-            }
-        } else if (diferencia < 0) {
-            for (let i = 0; i < Math.abs(diferencia); i++) {
-                contenedor.lastElementChild.remove();
-            }
-        }
+   function ajustarCantidadTarjetas(cantidad) {
+    // Limpia por completo el contenedor para reiniciar el flujo
+    contenedor.innerHTML = '';
+    // Crea e inyecta la cantidad exacta de tarjetas requeridas
+    for (let i = 0; i < cantidad; i++) {
+        contenedor.appendChild(crearTarjeta(generarColorHex()));
     }
+}
+
  
     function crearPaletaInicial(cantidad) {
         contenedor.innerHTML = '';
@@ -165,10 +179,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const miniPaleta = document.createElement('div');
             miniPaleta.className = 'mini-paleta';
  
-            // Agrega el nombre recuperado de la paleta
+      // PARCHE: se arma el nombre con textContent (no innerHTML) para que
+            // un nombre de paleta con caracteres tipo < > " no rompa el HTML
+            // ni permita inyectar código (XSS).
             const miniInfo = document.createElement('div');
             miniInfo.className = 'mini-info';
-            miniInfo.innerHTML = `<span class="mini-nombre">${paleta.nombre}</span>`;
+ 
+            const spanNombre = document.createElement('span');
+            spanNombre.className = 'mini-nombre';
+            spanNombre.textContent = paleta.nombre;
+ 
+            miniInfo.appendChild(spanNombre);
  
             const miniColores = document.createElement('div');
             miniColores.className = 'mini-colores';
@@ -191,22 +212,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
  
-    // MODIFICADO: agrega un destello visual (.activo) cada vez que se genera
+    // Agrega un destello visual (.activo) cada vez que se genera
     btnGenerar.addEventListener('click', () => {
         generarPaleta();
         btnGenerar.classList.add('activo');
         setTimeout(() => btnGenerar.classList.remove('activo'), 200);
     });
  
-    // MODIFICADO: además de ajustar la cantidad, actualiza el botón activo
-    btnesElegir.forEach(btn => {
-        btn.addEventListener('click', () => {
-            cantidadActual = parseInt(btn.dataset.cantidad, 10);
-            ajustarCantidadTarjetas(cantidadActual);
-            actualizarBotonesCantidad();
-        });
+    // Cambio de cantidad de colores (6, 8, 9)
+btnesElegir.forEach(btn => {
+    btn.addEventListener('click', () => {
+        cantidadActual = parseInt(btn.dataset.cantidad, 10);
+        
+        // 1. Cambiamos la iluminación del botón seleccionado
+        actualizarBotonesCantidad();
+        
+        // 2. Aplicamos inmediatamente la clase (cantidad-6, cantidad-8 o cantidad-9)
+        actualizarClaseCantidad(); 
+        
+        // 3. Por último, borramos y creamos las tarjetas dentro del grid ya configurado
+        ajustarCantidadTarjetas(cantidadActual); 
     });
- 
+});
+
+
     btnesFormato.forEach(btn => {
         btn.addEventListener('click', () => {
             const nuevoFormato = btn.dataset.formato;
@@ -272,7 +301,17 @@ document.addEventListener('DOMContentLoaded', () => {
             colores: coloresActuales
         });
  
-        localStorage.setItem('paletasColorsLife', JSON.stringify(paletasGuardadas));
+        // PARCHE: si el localStorage falla al guardar (por ejemplo, se llenó
+        // la cuota disponible), se avisa al usuario y se revierte el cambio
+        // en memoria en vez de dejar la app en un estado inconsistente.
+        try {
+            localStorage.setItem('paletasColorsLife', JSON.stringify(paletasGuardadas));
+        } catch (error) {
+            console.error('No se pudo guardar la paleta:', error);
+            alert('No se pudo guardar la paleta. Puede que se haya alcanzado el límite de almacenamiento.');
+            paletasGuardadas.pop();
+            return;
+        }
  
         inputNombre.value = '';
         formGuardar.classList.add('oculto');
@@ -284,9 +323,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const botonEliminar = e.target.closest('.btn-eliminar');
         
         if (botonEliminar) {
-            const index = botonEliminar.dataset.index;
+            // PARCHE: se convierte el índice a número explícitamente, ya que
+            // dataset siempre devuelve strings.
+            const index = parseInt(botonEliminar.dataset.index, 10);
             paletasGuardadas.splice(index, 1);
-            localStorage.setItem('paletasColorsLife', JSON.stringify(paletasGuardadas));
+ 
+            try {
+                localStorage.setItem('paletasColorsLife', JSON.stringify(paletasGuardadas));
+            } catch (error) {
+                console.error('No se pudo actualizar el almacenamiento tras borrar:', error);
+            }
+ 
             mostrarPaletasGuardadas();
         }
     });
@@ -294,6 +341,6 @@ document.addEventListener('DOMContentLoaded', () => {
     crearPaletaInicial(cantidadActual);
     actualizarBotonesFormato(); 
     actualizarBotonesCantidad(); //*Marca "6" como activo al cargar
+    actualizarClaseCantidad(); // Aplica "cantidad-6" al cargar
     mostrarPaletasGuardadas(); 
 });
- 
