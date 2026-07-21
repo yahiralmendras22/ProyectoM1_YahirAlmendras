@@ -21,7 +21,7 @@ main {
     flex-direction: column;
     align-items: center;
     width: 100%;
-    max-width: 1200px; /* Cambiado de 900px a 1200px para una visualización más estirada */
+    max-width: 1200px; /* Cambio a 1200px para una visualización más estirada */
 }
  
  
@@ -96,7 +96,7 @@ h3 {
     transform: scale(0.97);
 }
  
-/* NUEVO: destello visual al generar paleta */
+/* Destello visual al generar paleta */
 .btn-palette.activo {
     background-color: #4f4620;
     transform: scale(0.97);
@@ -124,7 +124,7 @@ h3 {
     transform: scale(0.97);
 }
  
-/* NUEVO: estado activo mientras el formulario de guardado está abierto */
+/* Estado activo mientras el formulario de guardado está abierto */
 .btn-guardar.activo {
     background-color: #837539;
     color: white;
@@ -208,7 +208,7 @@ h3 {
     display: grid;
     gap: 12px; /* Espaciado compacto para que todo quepa cómodo */
     width: 100%;
-    background: white; /* Cuadro blanco unificado para todas */
+    background: white; /* Cuadro blanco unificado para todos */
     padding: 20px;
     border-radius: 12px;
     box-shadow: var(--shadow-main);
