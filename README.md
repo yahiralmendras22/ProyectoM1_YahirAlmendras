@@ -1,1 +1,2 @@
-![Captura de pantalla de Colorslife](./assest/captura.png)
+<img src="./assest/captura.png" alt="Vista previa" width="400">
+
