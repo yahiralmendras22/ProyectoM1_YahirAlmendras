@@ -9,12 +9,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputNombre = document.querySelector('.input-nombre-paleta');
     const btnConfirmar = document.querySelector('.btn-confirmar-guardar');
     const listaGuardadas = document.querySelector('.lista-guardadas');
-
+ 
     let cantidadActual = 6;
     let formatoActual = 'hex'; 
     
     let paletasGuardadas = JSON.parse(localStorage.getItem('paletasColorsLife')) || [];
-
+ 
     function generarColorHex() {
         const letras = '0123456789ABCDEF';
         let color = '#';
@@ -23,16 +23,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return color;
     }
-
+ 
     function hexToHsl(hex) {
         let r = parseInt(hex.slice(1, 3), 16) / 255;
         let g = parseInt(hex.slice(3, 5), 16) / 255;
         let b = parseInt(hex.slice(5, 7), 16) / 255;
-
+ 
         const max = Math.max(r, g, b);
         const min = Math.min(r, g, b);
         let h, s, l = (max + min) / 2;
-
+ 
         if (max === min) {
             h = s = 0;
         } else {
@@ -45,18 +45,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             h /= 6;
         }
-
+ 
         h = Math.round(h * 360);
         s = Math.round(s * 100);
         l = Math.round(l * 100);
-
+ 
         return `hsl(${h}, ${s}%, ${l}%)`;
     }
-
+ 
     function formatearColor(hex) {
         return formatoActual === 'hex' ? hex : hexToHsl(hex);
     }
-
+ 
     function actualizarTextosFormato() {
         const tarjetas = document.querySelectorAll('.color-card');
         tarjetas.forEach(tarjeta => {
@@ -64,44 +64,64 @@ document.addEventListener('DOMContentLoaded', () => {
             tarjeta.querySelector('.color-code').textContent = formatearColor(hex);
         });
     }
-
+ 
     function actualizarBotonesFormato() {
         btnesFormato.forEach(btn => {
             btn.classList.toggle('activo', btn.dataset.formato === formatoActual);
         });
     }
-
+ 
+    // Marca visualmente cuál botón de cantidad está seleccionado
+    function actualizarBotonesCantidad() {
+        btnesElegir.forEach(btn => {
+            btn.classList.toggle('activo', parseInt(btn.dataset.cantidad, 10) === cantidadActual);
+        });
+    }
+ 
     function crearTarjeta(color) {
         const tarjeta = document.createElement('div');
         tarjeta.className = 'color-card';
         tarjeta.dataset.hex = color; 
-
+ 
         const box = document.createElement('div');
         box.className = 'color-box';
         box.style.backgroundColor = color;
-
+ 
         const code = document.createElement('div');
         code.className = 'color-code';
         code.textContent = formatearColor(color);
-
+ 
+        // Contenedor para agrupar los botones de candado y copiar
+        const acciones = document.createElement('div');
+        acciones.className = 'card-acciones';
+ 
         const lock = document.createElement('button');
         lock.className = 'btn-lock';
         lock.textContent = '🔓';
         lock.dataset.locked = 'false';
-
+ 
+        // Botón para copiar el código actual (hex o hsl) al portapapeles
+        const copiar = document.createElement('button');
+        copiar.className = 'btn-copiar';
+        copiar.textContent = '📋';
+        copiar.title = 'Copiar código';
+ 
+        acciones.appendChild(lock);
+        acciones.appendChild(copiar);
+ 
         tarjeta.appendChild(box);
         tarjeta.appendChild(code);
-        tarjeta.appendChild(lock);
-
+        tarjeta.appendChild(acciones);
+ 
         return tarjeta;
     }
-
+ 
     function generarPaleta() {
         const tarjetas = document.querySelectorAll('.color-card');
         tarjetas.forEach(tarjeta => {
             const lock = tarjeta.querySelector('.btn-lock');
             const bloqueado = lock.dataset.locked === 'true';
-
+ 
             if (!bloqueado) {
                 const nuevoColor = generarColorHex();
                 tarjeta.dataset.hex = nuevoColor;
@@ -110,11 +130,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
+ 
     function ajustarCantidadTarjetas(cantidad) {
         const tarjetasActuales = contenedor.querySelectorAll('.color-card');
         const diferencia = cantidad - tarjetasActuales.length;
-
+ 
         if (diferencia > 0) {
             for (let i = 0; i < diferencia; i++) {
                 contenedor.appendChild(crearTarjeta(generarColorHex()));
@@ -125,78 +145,85 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-
+ 
     function crearPaletaInicial(cantidad) {
         contenedor.innerHTML = '';
         for (let i = 0; i < cantidad; i++) {
             contenedor.appendChild(crearTarjeta(generarColorHex()));
         }
     }
-
+ 
     function mostrarPaletasGuardadas() {
         listaGuardadas.innerHTML = '';
-
+ 
         if (paletasGuardadas.length === 0) {
             listaGuardadas.innerHTML = '<p class="sin-guardadas">No hay paletas guardadas todavía.</p>';
             return;
         }
-
+ 
         paletasGuardadas.forEach((paleta, index) => {
             const miniPaleta = document.createElement('div');
             miniPaleta.className = 'mini-paleta';
-
+ 
             // Agrega el nombre recuperado de la paleta
             const miniInfo = document.createElement('div');
             miniInfo.className = 'mini-info';
             miniInfo.innerHTML = `<span class="mini-nombre">${paleta.nombre}</span>`;
-
+ 
             const miniColores = document.createElement('div');
             miniColores.className = 'mini-colores';
-
+ 
             paleta.colores.forEach(color => {
                 const divColor = document.createElement('div');
                 divColor.className = 'mini-color';
                 divColor.style.backgroundColor = color;
                 miniColores.appendChild(divColor);
             });
-
+ 
             const miniAcciones = document.createElement('div');
             miniAcciones.className = 'mini-acciones';
             miniAcciones.innerHTML = `<button class="btn-eliminar" data-index="${index}" title="Borrar paleta">🗑️</button>`;
-
+ 
             miniPaleta.appendChild(miniInfo);
             miniPaleta.appendChild(miniColores);
             miniPaleta.appendChild(miniAcciones);
             listaGuardadas.appendChild(miniPaleta);
         });
     }
-
-    btnGenerar.addEventListener('click', generarPaleta);
-
+ 
+    // MODIFICADO: agrega un destello visual (.activo) cada vez que se genera
+    btnGenerar.addEventListener('click', () => {
+        generarPaleta();
+        btnGenerar.classList.add('activo');
+        setTimeout(() => btnGenerar.classList.remove('activo'), 200);
+    });
+ 
+    // MODIFICADO: además de ajustar la cantidad, actualiza el botón activo
     btnesElegir.forEach(btn => {
         btn.addEventListener('click', () => {
             cantidadActual = parseInt(btn.dataset.cantidad, 10);
             ajustarCantidadTarjetas(cantidadActual);
+            actualizarBotonesCantidad();
         });
     });
-
+ 
     btnesFormato.forEach(btn => {
         btn.addEventListener('click', () => {
             const nuevoFormato = btn.dataset.formato;
             if (nuevoFormato === formatoActual) return; 
-
+ 
             formatoActual = nuevoFormato;
             actualizarTextosFormato();
             actualizarBotonesFormato();
         });
     });
-
+ 
     contenedor.addEventListener('click', (e) => {
         if (e.target.classList.contains('btn-lock')) {
             const lock = e.target;
             const tarjeta = lock.closest('.color-card');
             const bloqueado = lock.dataset.locked === 'true';
-
+ 
             if (bloqueado) {
                 lock.dataset.locked = 'false';
                 lock.textContent = '🔓';
@@ -207,30 +234,52 @@ document.addEventListener('DOMContentLoaded', () => {
                 tarjeta.classList.add('is-locked');
             }
         }
+ 
+        // Copia el código (hex o hsl, según el formato activo) al portapapeles
+        if (e.target.classList.contains('btn-copiar')) {
+            const btnCopiar = e.target;
+            const tarjeta = btnCopiar.closest('.color-card');
+            const codigo = formatearColor(tarjeta.dataset.hex);
+ 
+            navigator.clipboard.writeText(codigo).then(() => {
+                const textoOriginal = btnCopiar.textContent;
+                btnCopiar.textContent = '✅';
+                btnCopiar.classList.add('copiado');
+                setTimeout(() => {
+                    btnCopiar.textContent = textoOriginal;
+                    btnCopiar.classList.remove('copiado');
+                }, 1000);
+            }).catch(() => {
+                alert('No se pudo copiar el código.');
+            });
+        }
     });
-
+ 
+    // MODIFICADO: el botón "Guardar Paleta" queda marcado como activo mientras el formulario está abierto
     btnGuardar.addEventListener('click', () => {
         formGuardar.classList.toggle('oculto');
+        btnGuardar.classList.toggle('activo', !formGuardar.classList.contains('oculto'));
         inputNombre.focus();
     });
-
+ 
     btnConfirmar.addEventListener('click', () => {
         const nombre = inputNombre.value.trim() || "Mi Paleta";
         const tarjetas = document.querySelectorAll('.color-card');
         const coloresActuales = Array.from(tarjetas).map(t => t.dataset.hex);
-
+ 
         paletasGuardadas.push({
             nombre: nombre,
             colores: coloresActuales
         });
-
+ 
         localStorage.setItem('paletasColorsLife', JSON.stringify(paletasGuardadas));
-
+ 
         inputNombre.value = '';
         formGuardar.classList.add('oculto');
+        btnGuardar.classList.remove('activo'); // Se apaga el estado activo al confirmar
         mostrarPaletasGuardadas();
     });
-
+ 
     listaGuardadas.addEventListener('click', (e) => {
         const botonEliminar = e.target.closest('.btn-eliminar');
         
@@ -241,9 +290,10 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarPaletasGuardadas();
         }
     });
-
+ 
     crearPaletaInicial(cantidadActual);
     actualizarBotonesFormato(); 
+    actualizarBotonesCantidad(); //*Marca "6" como activo al cargar
     mostrarPaletasGuardadas(); 
 });
-
+ 
