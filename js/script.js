@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     const btnGenerar = document.querySelector('.btn-palette');
     const btnesElegir = document.querySelectorAll('.btn-elegir button');
