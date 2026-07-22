@@ -1,6 +1,5 @@
 
 document.addEventListener('DOMContentLoaded', () => {
-    //evento del DOM//
     const btnGenerar = document.querySelector('.btn-palette');
     const btnesElegir = document.querySelectorAll('.btn-elegir button');
     const btnesFormato = document.querySelectorAll('.btn-formato');
@@ -414,10 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
             colores: coloresActuales,
             fecha: new Date().toISOString(),
         };
- 
-        // MEJORA: array inmutable. En vez de mutar paletasGuardadas con push()
-        // y tener que revertir con pop() si falla el guardado, armamos una
-        // lista nueva primero y solo la "confirmamos" como estado real si
+
         // guardarPaletas() tuvo éxito. Así el estado en memoria nunca queda
         // desincronizado del storage, ni por un instante.
         const listaNueva = [...paletasGuardadas, nuevaPaleta];
