@@ -14,11 +14,19 @@ Este proyecto fue realidazado con HTML,CSS Y JavaScript puro, manipulacion del D
 
 ## 📸 Captura de pantalla y GIF de uso
 
+### Pagina Principal
+
+![Inicio](assets/captura1.png)
+
+### Final de la Pagina
+
+![Final](assets/captura2.png)
+
 ---
 
-[inicio] 
+## 🛠️ Herramientas Utilizada
 
-## 🛠️ Herramientas Utilizadas
+### Durante el desarrollo del proyecto se trabajo con:
 
 - HTML 5
 - CSS3
@@ -27,6 +35,13 @@ Este proyecto fue realidazado con HTML,CSS Y JavaScript puro, manipulacion del D
 - Git
 - Github
 - Git Pages
+- Arrays y objetos
+- JSON.stringify() y JSON.parse()
+- Clipboard API.
+- Accesibilidad básica.
+- Eventos.
+- Funciones.
+- Manipulación del DOM.
 
 ---
 
@@ -55,6 +70,9 @@ ProyectoM1_YahirAlmendras/
 ├── assets/
 │   └── favicon.ico
 │   └── captura.png
+│   └── captura1.png
+│   └── captura2.png
+│ 
 └── js/
     └── script.js
 ```
@@ -113,6 +131,11 @@ Las paletas se almacenan localmente en el navegador mediante **LocalStorage**, i
 
 ### Gestión de paletas
 Las paletas almacenadas pueden visualizarse y eliminarse cuando el usuario lo desee.
+
+---
+
+## 🤖Uso de Inteligencia Artificial
+
 
 ---
 
