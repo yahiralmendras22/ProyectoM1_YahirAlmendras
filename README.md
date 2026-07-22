@@ -22,6 +22,12 @@ Este proyecto fue realidazado con HTML,CSS Y JavaScript puro, manipulacion del D
 
 ![Final](assets/captura2.png)
 
+### GIF
+
+![gif uso](media/generador-de-paleta.gif)
+
+
+
 ---
 
 ## 🛠️ Herramientas Utilizada
