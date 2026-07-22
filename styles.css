@@ -1,3 +1,4 @@
+
 :root {
     --shadow-main: 0 4px 15px rgba(0, 0, 0, 0.2);
     --border-radius: 8px;
@@ -215,36 +216,36 @@ h3 {
     box-sizing: border-box;
     margin-bottom: 2rem;
 }
-
+ 
 /* ==========================================
    FORZAR 2 LÍNEAS ESTRICTAS (Cero riesgo de 3)
    ========================================== */
-
+ 
 /* 6 tarjetas -> 2 filas fijas de 3 columnas */
 .palette-container.cantidad-6 {
     grid-template-columns: repeat(3, 1fr);
 }
-
+ 
 /* 8 tarjetas -> 2 filas fijas de 4 columnas */
 .palette-container.cantidad-8 {
     grid-template-columns: repeat(4, 1fr);
 }
-
+ 
 /* 9 tarjetas -> Rejilla matemática de 20 espacios invisibles */
 .palette-container.cantidad-9 {
     grid-template-columns: repeat(20, 1fr);
 }
-
+ 
 /* En la de 9: Las primeras 4 tarjetas toman 5 espacios cada una (4 x 5 = 20) -> Fila 1 */
 .palette-container.cantidad-9 .color-card:nth-child(-n+4) {
     grid-column: span 5;
 }
-
+ 
 /* En la de 9: Las últimas 5 tarjetas toman 4 espacios cada una (5 x 4 = 20) -> Fila 2 */
 .palette-container.cantidad-9 .color-card:nth-child(n+5) {
     grid-column: span 4;
 }
-
+ 
 /* ==========================================
    ESTILO DE LAS TARJETAS (Compactas y limpias)
    ========================================== */
@@ -261,7 +262,7 @@ h3 {
     min-width: 0; /* EVITA que los textos largos o botones deformen el grid */
     overflow: hidden;
 }
-
+ 
 /* El cuadro de color interno */
 .color-box {
     width: 100%;
@@ -277,28 +278,9 @@ h3 {
     gap: 8px;
 }
  
-.btn-lock {
-    border: 1px solid #ddd;
-    background: white;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    cursor: pointer;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
-}
- 
-.btn-lock:hover {
-    transform: scale(1.1);
-    background: #f9f9f9;
-    border-color: #bbb;
-}
- 
-/* Botón para copiar el código de color */
+/* Estilo compartido por los botones circulares de acción de la tarjeta
+   (antes .btn-lock y .btn-copiar repetían exactamente el mismo bloque) */
+.btn-lock,
 .btn-copiar {
     border: 1px solid #ddd;
     background: white;
@@ -314,6 +296,7 @@ h3 {
     transition: all 0.2s ease;
 }
  
+.btn-lock:hover,
 .btn-copiar:hover {
     transform: scale(1.1);
     background: #f9f9f9;
@@ -495,9 +478,18 @@ footer p {
     text-align: center;
 }
  
+/* El <p>Redes Sociales</p> vive dentro de .footer-redes, que es una fila
+   junto a los íconos: el margin-bottom y el text-align de "footer p" no
+   tenían sentido ahí (estaban pensados para un párrafo en columna). */
+.footer-redes p {
+    margin: 0;
+    text-align: left;
+}
+ 
 .footer-redes {
     display: flex;
-    gap: 18px; /* Espaciado cómodo entre los 5 iconos */
+    align-items: center;
+    gap: 18px; /* Espaciado cómodo entre el texto y los iconos */
 }
  
 .footer-redes a {

@@ -130,6 +130,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return formatoActual === 'hex' ? hex : hexToHsl(hex);
     }
  
+    // Formatea la fecha ISO guardada en cada paleta a algo legible (dd/mm/aaaa)
+    function formatearFecha(fechaIso) {
+        try {
+            const fecha = new Date(fechaIso);
+            return fecha.toLocaleDateString('es-AR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+            });
+        } catch {
+            return '';
+        }
+    }
+ 
     function actualizarTextosFormato() {
         const tarjetas = document.querySelectorAll('.color-card');
         tarjetas.forEach(tarjeta => {
@@ -181,12 +195,15 @@ document.addEventListener('DOMContentLoaded', () => {
         lock.className = 'btn-lock';
         lock.textContent = '🔓';
         lock.dataset.locked = 'false';
+        lock.setAttribute('aria-label', 'Bloquear color');
+        lock.title = 'Bloquear color';
  
         // Botón para copiar el código actual (hex o hsl) al portapapeles
         const copiar = document.createElement('button');
         copiar.className = 'btn-copiar';
         copiar.textContent = '📋';
         copiar.title = 'Copiar código';
+        copiar.setAttribute('aria-label', 'Copiar código de color');
  
         acciones.appendChild(lock);
         acciones.appendChild(copiar);
@@ -213,22 +230,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
  
-    function ajustarCantidadTarjetas(cantidad) {
-        // Limpia por completo el contenedor para reiniciar el flujo
-        contenedor.innerHTML = '';
-        // Crea e inyecta la cantidad exacta de tarjetas requeridas
-        for (let i = 0; i < cantidad; i++) {
-            contenedor.appendChild(crearTarjeta(generarColorHex()));
-        }
+   function renderizarTarjetas(cantidad) {
+    const tarjetas = Array.from(contenedor.querySelectorAll('.color-card'));
+
+    // Agregar tarjetas si faltan
+    while (tarjetas.length < cantidad) {
+        const nuevaTarjeta = crearTarjeta(generarColorHex());
+        contenedor.appendChild(nuevaTarjeta);
+        tarjetas.push(nuevaTarjeta);
     }
- 
- 
-    function crearPaletaInicial(cantidad) {
-        contenedor.innerHTML = '';
-        for (let i = 0; i < cantidad; i++) {
-            contenedor.appendChild(crearTarjeta(generarColorHex()));
-        }
+
+    // Eliminar tarjetas si sobran
+    while (tarjetas.length > cantidad) {
+        const tarjeta = tarjetas.pop();
+        tarjeta.remove();
     }
+}
+
  
     function mostrarPaletasGuardadas() {
         listaGuardadas.innerHTML = '';
@@ -256,6 +274,15 @@ document.addEventListener('DOMContentLoaded', () => {
  
             miniInfo.appendChild(spanNombre);
  
+            // La fecha se guarda en cada paleta.
+            // Ahora se pinta debajo del nombre.
+            if (paleta.fecha) {
+                const spanFecha = document.createElement('span');
+                spanFecha.className = 'mini-fecha';
+                spanFecha.textContent = formatearFecha(paleta.fecha);
+                miniInfo.appendChild(spanFecha);
+            }
+ 
             const miniColores = document.createElement('div');
             miniColores.className = 'mini-colores';
  
@@ -273,6 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnEliminar.className = 'btn-eliminar';
             btnEliminar.dataset.id = paleta.id; // id, no índice
             btnEliminar.title = 'Borrar paleta';
+            btnEliminar.setAttribute('aria-label', `Borrar paleta ${paleta.nombre}`);
             btnEliminar.textContent = '🗑️';
             miniAcciones.appendChild(btnEliminar);
  
@@ -302,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
             actualizarClaseCantidad();
  
             // 3. Por último, borramos y creamos las tarjetas dentro del grid ya configurado
-            ajustarCantidadTarjetas(cantidadActual);
+            renderizarTarjetas(cantidadActual);
         });
     });
  
@@ -327,12 +355,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if (bloqueado) {
                 lock.dataset.locked = 'false';
                 lock.textContent = '🔓';
+                lock.title = 'Bloquear color';
+                lock.setAttribute('aria-label', 'Bloquear color');
                 tarjeta.classList.remove('is-locked');
             } else {
                 lock.dataset.locked = 'true';
                 lock.textContent = '🔒';
+                lock.title = 'Desbloquear color';
+                lock.setAttribute('aria-label', 'Desbloquear color');
                 tarjeta.classList.add('is-locked');
             }
+            return;
         }
  
         // Copia el código (hex o hsl, según el formato activo) al portapapeles
@@ -352,6 +385,20 @@ document.addEventListener('DOMContentLoaded', () => {
             }).catch(() => {
                 alert('No se pudo copiar el código.');
             });
+            return;
+        }
+ 
+        // Clic directo sobre el color regenera solo esa tarjeta (si no está bloqueada)
+        if (e.target.classList.contains('color-box')) {
+            const tarjeta = e.target.closest('.color-card');
+            const lock = tarjeta.querySelector('.btn-lock');
+            const bloqueado = lock.dataset.locked === 'true';
+            if (bloqueado) return;
+ 
+            const nuevoColor = generarColorHex();
+            tarjeta.dataset.hex = nuevoColor;
+            e.target.style.backgroundColor = nuevoColor;
+            tarjeta.querySelector('.color-code').textContent = formatearColor(nuevoColor);
         }
     });
  
@@ -399,6 +446,12 @@ document.addEventListener('DOMContentLoaded', () => {
  
         if (botonEliminar) {
             const id = botonEliminar.dataset.id;
+            const nombrePaleta = paletasGuardadas.find(p => p.id === id)?.nombre ?? 'esta paleta';
+ 
+            // Confirmación antes de borrar para evitar pérdidas accidentales
+            if (!confirm(`¿Borrar la paleta "${nombrePaleta}"? Esta acción no se puede deshacer.`)) {
+                return;
+            }
  
             // dispararon casi juntos: siempre se elimina la paleta correcta.
             const listaNueva = paletasGuardadas.filter(p => p.id !== id);
@@ -415,9 +468,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
  
-    crearPaletaInicial(cantidadActual);
+    renderizarTarjetas(cantidadActual);
     actualizarBotonesFormato();
     actualizarBotonesCantidad(); //*Marca "6" como activo al cargar
     actualizarClaseCantidad(); // Aplica "cantidad-6" al cargar
     mostrarPaletasGuardadas();
 });
+ 
