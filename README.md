@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./assest/captura.png" alt="Vista previa" width="400">
+  <img src="./assets/captura.png" alt="Vista previa" width="400">
 </div>
 
 # 🎨 Generador de Paleta de Colores
@@ -14,5 +14,18 @@ Este proyecto fue realidazado con HTML,CSS Y JavaScript puro, manipulacion del D
 
 ## 📸 Captura de pantalla y GIF de uso
 
+---
 
+## 🛠️ Herramientas Utilizadas
+
+- HTML 5
+- CSS3
+- JavaScript
+- Git
+- Github
+- Git Pages
+
+---
+
+## ✨ 
 
