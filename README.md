@@ -73,6 +73,9 @@ ProyectoM1_YahirAlmendras/
 ├── styles.css
 ├── README.md
 │
+├── media/
+│   └── generador-de-paleta.gif
+│
 ├── assets/
 │   └── favicon.ico
 │   └── captura.png
