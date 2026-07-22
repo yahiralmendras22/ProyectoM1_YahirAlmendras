@@ -21,20 +21,118 @@ Este proyecto fue realidazado con HTML,CSS Y JavaScript puro, manipulacion del D
 - HTML 5
 - CSS3
 - JavaScript
+- LocalStorege API
 - Git
 - Github
 - Git Pages
 
 ---
 
-## ✨ ## Funcionalidades
+## 🚀 Características
+
+- 🎨 Generación automática de paletas de colores aleatorias.
+- 🔢 Selección de **6, 8 o 9 colores** por paleta.
+- 🎯 Visualización de colores en formato **HEX** o **HSL**.
+- 🔒 Bloqueo de colores para conservarlos al generar nuevas paletas.
+- 📋 Copia del código de cualquier color al portapapeles.
+- 💾 Guardado de paletas personalizadas con nombre.
+- 📅 Registro de la fecha de creación de cada paleta guardada.
+- 🗑️ Eliminación de paletas guardadas con confirmación.
+- 💽 Persistencia de datos mediante **LocalStorage**.
+- 📱 Diseño responsive utilizando Flexbox y CSS Grid.
+
+## 📂 Estructura del proyecto
+
+```
+ProyectoM1_YahirAlmendras/
+│
+├── index.html
+├── styles.css
+├── README.md
+│
+├── assets/
+│   └── favicon.ico
+│   └── captura.png
+└── js/
+    └── script.js
+```
+
+---
+
+## ⚙️ Instalación
+
+Clona este repositorio:
+
+```bash
+git clone https://github.com/yahiralmendras22/ProyectoM1_YahirAlmendras.git
+```
+
+Ingresa a la carpeta del proyecto:
+
+```bash
+cd ProyectoM1_YahirAlmendras
+```
+
+Abre el archivo **index.html** en tu navegador favorito.
+
+---
+
+## 📖 Cómo utilizar la aplicación
+
+1. Haz clic en **🎨 Generar Paleta** para crear una nueva combinación de colores.
+2. Selecciona la cantidad de colores que deseas visualizar (6, 8 o 9).
+3. Cambia el formato de visualización entre **HEX** y **HSL**.
+4. Bloquea los colores que quieras conservar usando el botón 🔒.
+5. Haz clic sobre cualquier color para generar uno nuevo individualmente.
+6. Copia cualquier código de color utilizando el botón 📋.
+7. Guarda la paleta asignándole un nombre.
+8. Consulta, administra o elimina las paletas guardadas desde la sección **Paletas Guardadas**.
+
+---
+
+## 💡 Funcionalidades principales
+
+### Generación de colores
+Cada color se genera aleatoriamente utilizando valores hexadecimales.
+
+### Conversión de formato
+Los colores pueden visualizarse en formato **HEX** o **HSL** sin modificar la paleta generada.
+
+### Bloqueo de colores
+Permite mantener determinados colores mientras se generan nuevos para el resto de la paleta.
+
+### Guardado de paletas
+Las paletas se almacenan localmente en el navegador mediante **LocalStorage**, incluyendo:
+
+- Nombre personalizado
+- Fecha de creación
+- Lista de colores
+- Identificador único
+
+### Gestión de paletas
+Las paletas almacenadas pueden visualizarse y eliminarse cuando el usuario lo desee.
+
+---
+
+## 🌐 Repositorio
+
+GitHub:
+
+**ProyectoM1_YahirAlmendras**
+
+<https://github.com/yahiralmendras22/ProyectoM1_YahirAlmendras>
+
+---
+
+## 👨‍💻 Autor
+
+**Yahir Almendras**
+
+- GitHub: <https://github.com/yahiralmendras22>
+- LinkedIn: <https://linkedin.com/in/yahir-almendras-606379423>
+
+---
+
  
-- Generación aleatoria de paletas de 6, 8 o 9 colores.
-- Formato de color intercambiable: **HEX** / **HSL**.
-- Bloqueo individual de colores (🔒) para que no se regeneren.
-- Click directo sobre un color para regenerar solo esa tarjeta.
-- Copiar el código de un color al portapapeles (📋).
-- Guardado de paletas con nombre propio, persistidas en `localStorage`.
-- Eliminación de paletas guardadas (con confirmación).
 
 
