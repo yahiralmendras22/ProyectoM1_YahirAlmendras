@@ -141,6 +141,37 @@ Las paletas almacenadas pueden visualizarse y eliminarse cuando el usuario lo de
 
 ## 🤖Uso de Inteligencia Artificial
 
+Durante el desarrollo de esta proyecto,se  utilizaron varias herramientas de Inteligencia Artificial como soporte tecnico.(**ChatGpt**, **Claude** y **Geminis**), le pedia que me explicara detalladamente como usar un formula de codigo paso a paso, para que quedara bien efecutada con mi supervision en el cual trabajos codo a codo, en el cual texteaba cada pieza de codigo antes de incluirla en el proyecto, dado al hecho en el cual estoy empezando a programar.
+
+### En que utilicé la ia:
+
+- Comprendimiento del funcionamiento de funciones, eventos y renderizado.
+- Como obtener ejemplos para incoorporar las funcionalidades como:
+    - Generar aleatoria los codigos de colores.
+    - Conversión de HSL a HEX y viceversa.
+    - Copiado del código HEX o HSL al portapapeles + accion del tilde ✅ de que se guardo.
+    - Bloqueo de colores.
+    - Bloqueo de los coleres en el apretar los botenes 6, 8 y 9 no se modifiquen.
+    - Guardado de la paleta.
+    - Uso de localStorage.
+    - Fecha en el cual guardo la paleta.
+    - Borrar la paleta guardada + accion de apretar seguramente borrar.
+- Asitencia en como poner un logo en el foother.
+- Ayuda espeficamente con el localStorage.
+- Ayuda con el cual poner una imagen en el title del html + como adaptar una img.png a favicon.
+- Asitencia en como redactar un README.md profesionalmente.
+
+### ¿Que cosas apredi?:
+
+Todo esto me sirvio para aprender y comprender los conceptos que no tenia dominado en especial javascript ya que es muy profundo para el desarrollo de funcionalidad, etc.
+
+### Documentacion de la IA:
+
+
+
+
+
+
 
 ---
 
