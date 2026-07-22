@@ -87,13 +87,12 @@ document.addEventListener('DOMContentLoaded', () => {
     //funcion para que genere un color aleatorio//
  
     function generarColorHex() {
-        const letras = '0123456789ABCDEF';
-        let color = '#';
-        for (let i = 0; i < 6; i++) {
-            color += letras[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    }
+
+      const numero = Math.floor(Math.random() * 16777216);
+
+      return "#" + numero.toString(16).padStart(6, "0").toUpperCase();
+
+}
  
     //genera una funcion de codigo hsl//
  
@@ -216,19 +215,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
  
     function generarPaleta() {
-        const tarjetas = document.querySelectorAll('.color-card');
-        tarjetas.forEach(tarjeta => {
-            const lock = tarjeta.querySelector('.btn-lock');
-            const bloqueado = lock.dataset.locked === 'true';
- 
-            if (!bloqueado) {
-                const nuevoColor = generarColorHex();
-                tarjeta.dataset.hex = nuevoColor;
-                tarjeta.querySelector('.color-box').style.backgroundColor = nuevoColor;
-                tarjeta.querySelector('.color-code').textContent = formatearColor(nuevoColor);
-            }
-        });
-    }
+
+    document.querySelectorAll(".color-card").forEach(tarjeta => {
+
+        const bloqueado =
+            tarjeta.querySelector(".btn-lock").dataset.locked === "true";
+
+        if (bloqueado) return;
+
+        const color = generarColorHex();
+
+        tarjeta.dataset.hex = color;
+
+        tarjeta.querySelector(".color-box").style.backgroundColor = color;
+
+        tarjeta.querySelector(".color-code").textContent =
+            formatearColor(color);
+
+    });
+
+}
  
    function renderizarTarjetas(cantidad) {
     const tarjetas = Array.from(contenedor.querySelectorAll('.color-card'));
