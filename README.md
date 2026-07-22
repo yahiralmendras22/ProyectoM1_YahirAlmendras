@@ -103,10 +103,9 @@ Abre el archivo **index.html** en tu navegador favorito.
 2. Selecciona la cantidad de colores que deseas visualizar (6, 8 o 9).
 3. Cambia el formato de visualización entre **HEX** y **HSL**.
 4. Bloquea los colores que quieras conservar usando el botón 🔒.
-5. Haz clic sobre cualquier color para generar uno nuevo individualmente.
-6. Copia cualquier código de color utilizando el botón 📋.
-7. Guarda la paleta asignándole un nombre.
-8. Consulta, administra o elimina las paletas guardadas desde la sección **Paletas Guardadas**.
+5. Copia cualquier código de color utilizando el botón 📋.
+6. Guarda la paleta asignándole un nombre.
+7. Consulta, administra o elimina las paletas guardadas desde la sección **Paletas Guardadas**.
 
 ---
 

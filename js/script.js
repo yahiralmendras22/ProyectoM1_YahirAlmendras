@@ -394,18 +394,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
  
-        // Clic directo sobre el color regenera solo esa tarjeta (si no está bloqueada)
-        if (e.target.classList.contains('color-box')) {
-            const tarjeta = e.target.closest('.color-card');
-            const lock = tarjeta.querySelector('.btn-lock');
-            const bloqueado = lock.dataset.locked === 'true';
-            if (bloqueado) return;
- 
-            const nuevoColor = generarColorHex();
-            tarjeta.dataset.hex = nuevoColor;
-            e.target.style.backgroundColor = nuevoColor;
-            tarjeta.querySelector('.color-code').textContent = formatearColor(nuevoColor);
-        }
     });
  
     // El botón "Guardar Paleta" queda marcado como activo mientras el formulario está abierto
