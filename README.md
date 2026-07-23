@@ -145,7 +145,7 @@ La sección inferior permite listar de forma dinámica las combinaciones creadas
 
 ## 🤖 Uso de Inteligencia Artificial
 
-Durante el desarrollo de este proyecto, se utilizaron herramientas de Inteligencia Artificial como soporte técnico (**ChatGPT**, **Claude** y **Gemini**). Su uso se centró en solicitar explicaciones detalladas sobre fórmulas y lógicas paso a paso para integrarlas bajo mi propia supervisión. Trabajamos codo a codo probando cada fragmento de código de manera rigurosa antes de incluirlo en el repositorio, lo cual optimizó mi curva de aprendizaje al estar iniciando en el mundo de la programación.
+Durante el desarrollo de este proyecto, se utilizaron herramientas de Inteligencia Artificial como soporte técnico **ChatGPT**, **Claude(AI)** y **Gemini**. Su uso se centró en solicitar explicaciones detalladas sobre fórmulas y lógicas paso a paso para integrarlas bajo mi propia supervisión. Trabajamos codo a codo probando cada fragmento de código de manera rigurosa antes de incluirlo en el repositorio, lo cual optimizó mi curva de aprendizaje al estar iniciando en el mundo de la programación.
 
 ### ¿En qué utilicé la IA?:
 
