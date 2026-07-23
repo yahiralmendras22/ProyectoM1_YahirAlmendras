@@ -84,9 +84,8 @@ ProyectoM1_YahirAlmendras/
 ├── js/
 │   └── script.js
 │
-├── documentacion/
-    └── (Capturas de pantalla del proceso)
-
+└── documentacion/
+    └── (capturas del proceso)
 ---
 
 ## ⚙️ Instalación
@@ -160,7 +159,7 @@ Toda esta experiencia me sirvió para asimilar, estructurar y dominar conceptos 
 ### 📂 Documentación del Proyecto
 
 Puedes ver todas las capturas y detalles haciendo clic en el siguiente enlace:
-👉 [Ver Carpeta de Documentación](./documentacion)
+👉 [Ver Carpeta de Documentación](./documentación)
 
 ---
 
