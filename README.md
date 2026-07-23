@@ -66,8 +66,6 @@ Este proyecto fue realizado con HTML, CSS y JavaScript puro, manipulación del D
 
 ## 📂 Estructura del proyecto
 
-## 📂 Estructura del proyecto
-
 ```text
 ProyectoM1_YahirAlmendras/
 │
